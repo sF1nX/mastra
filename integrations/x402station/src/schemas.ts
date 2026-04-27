@@ -87,10 +87,20 @@ export const EndpointMetadataSchema = z
   })
   .passthrough();
 
+// `warnings` and `signals` on response payloads are typed as
+// `z.union([SignalSchema, z.string()])` (rather than `SignalSchema`
+// directly): the x402station signal vocabulary is server-extensible,
+// so a strict enum on the response would throw at parse time when the
+// oracle ships a new signal — *after* the agent has already paid for
+// the call. Inputs (watch.subscribe.signals) keep the strict enum so
+// typos still get caught before round-trip. CodeRabbit
+// (mastra-ai/mastra#15804, 2026-04-27).
+const WarningsArraySchema = z.array(z.union([SignalSchema, z.string()]));
+
 export const PreflightOutputSchema = z.object({
   result: z.object({
     ok: z.boolean(),
-    warnings: z.array(SignalSchema),
+    warnings: WarningsArraySchema,
     metadata: EndpointMetadataSchema,
   }),
   paymentReceipt: PaymentReceiptSchema,
@@ -100,7 +110,7 @@ export const ForensicsOutputSchema = z.object({
   result: z
     .object({
       ok: z.boolean(),
-      warnings: z.array(SignalSchema),
+      warnings: WarningsArraySchema,
       decoy_probability: z.number(),
       metadata: EndpointMetadataSchema,
     })
@@ -129,7 +139,7 @@ export const WatchSubscribeOutputSchema = z.object({
       watchId: z.string(),
       secret: z.string(),
       expiresAt: z.string(),
-      signals: z.array(SignalSchema),
+      signals: WarningsArraySchema,
       alertsPaid: z.number(),
       alertsRemaining: z.number(),
     })
@@ -147,11 +157,13 @@ export const WatchStatusOutputSchema = z
   })
   .passthrough();
 
-export const WatchUnsubscribeOutputSchema = z.object({
-  watchId: z.string(),
-  isActive: z.literal(false),
-  message: z.string(),
-});
+export const WatchUnsubscribeOutputSchema = z
+  .object({
+    watchId: z.string(),
+    isActive: z.literal(false),
+    message: z.string(),
+  })
+  .passthrough();
 
 export type PreflightInput = z.infer<typeof PreflightInputSchema>;
 export type ForensicsInput = z.infer<typeof ForensicsInputSchema>;

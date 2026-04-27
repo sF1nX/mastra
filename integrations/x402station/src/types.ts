@@ -183,6 +183,7 @@ export interface WatchUnsubscribeResponse {
   watchId: string;
   isActive: false;
   message: string;
+  [key: string]: unknown;
 }
 
 /** Wraps a paid response with its payment receipt for spend auditing. */

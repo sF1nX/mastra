@@ -107,6 +107,26 @@ describe('getX402StationClient — baseUrl allow-list', () => {
       /baseUrl must be/i,
     );
   });
+
+  it('rejects localhost.attacker.com (CodeRabbit: prefix-match bypass)', () => {
+    // u.host.startsWith("localhost") would PASS this attacker domain.
+    // Implementation must use u.hostname exact-match.
+    expect(() => getX402StationClient({ privateKey: VALID_PK, baseUrl: 'http://localhost.attacker.com' })).toThrow(
+      /baseUrl must be/i,
+    );
+  });
+
+  it('rejects 127.0.0.1.evil.example (CodeRabbit: prefix-match bypass)', () => {
+    expect(() => getX402StationClient({ privateKey: VALID_PK, baseUrl: 'http://127.0.0.1.evil.example' })).toThrow(
+      /baseUrl must be/i,
+    );
+  });
+
+  it('rejects localhost-impersonation suffixes', () => {
+    expect(() => getX402StationClient({ privateKey: VALID_PK, baseUrl: 'http://localhost-evil.example' })).toThrow(
+      /baseUrl must be/i,
+    );
+  });
 });
 
 describe('getX402StationClient — account resolution', () => {

@@ -32,7 +32,7 @@ function resolveBaseUrl(raw: string | undefined): string {
   }
   const isCanonical = u.host === 'x402station.io' && u.protocol === 'https:';
   const isLocalDev =
-    (u.host.startsWith('localhost') || u.host.startsWith('127.0.0.1') || u.host.startsWith('[::1]')) &&
+    (u.hostname === 'localhost' || u.hostname === '127.0.0.1' || u.hostname === '[::1]') &&
     (u.protocol === 'http:' || u.protocol === 'https:');
   if (!isCanonical && !isLocalDev) {
     throw new Error(

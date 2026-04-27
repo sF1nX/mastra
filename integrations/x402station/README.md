@@ -36,10 +36,16 @@ Sepolia (`eip155:84532`). USDC on Base mainnet:
 import { Agent } from '@mastra/core/agent';
 import { createX402StationTools } from '@mastra/x402station';
 
+// Fail fast if the env var is unset — the client otherwise throws on
+// the first paid call with a clear message, but the explicit guard
+// keeps the type strict and avoids `string | undefined` complaints.
+const privateKey = process.env.AGENT_PRIVATE_KEY;
+if (!privateKey) throw new Error('Set AGENT_PRIVATE_KEY for the x402station tools');
+
 const tools = createX402StationTools({
   // 0x-prefixed 64-hex private key. Or pass `account: viemAccount` instead,
-  // or set X402STATION_PRIVATE_KEY in the environment.
-  privateKey: process.env.AGENT_PRIVATE_KEY,
+  // or rely on X402STATION_PRIVATE_KEY in the environment (read by the client).
+  privateKey,
 });
 
 const agent = new Agent({
