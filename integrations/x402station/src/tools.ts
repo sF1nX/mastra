@@ -1,3 +1,4 @@
+import { createX402StationAlternativesTool } from './alternatives.js';
 import type { X402StationClientOptions } from './client.js';
 import { createX402StationCatalogDecoysTool } from './decoys.js';
 import { createX402StationForensicsTool } from './forensics.js';
@@ -9,7 +10,7 @@ import {
 } from './watch.js';
 
 /**
- * Build all six x402station tools in one call. Pass a single
+ * Build all seven x402station tools in one call. Pass a single
  * configuration (account / privateKey / baseUrl / fetchImpl /
  * timeoutMs) and every tool inherits it.
  *
@@ -22,7 +23,7 @@ import {
  *
  * const agent = new Agent({
  *   id: 'shielded-x402-agent',
- *   instructions: 'Always preflight URLs before paying x402. Refuse if ok=false.',
+ *   instructions: 'Preflight URLs before paying x402. If ok=false, call alternatives.',
  *   model: 'anthropic/claude-sonnet-4-6',
  *   tools,
  * });
@@ -33,6 +34,7 @@ export function createX402StationTools(config: X402StationClientOptions = {}) {
     x402StationPreflight: createX402StationPreflightTool(config),
     x402StationForensics: createX402StationForensicsTool(config),
     x402StationCatalogDecoys: createX402StationCatalogDecoysTool(config),
+    x402StationAlternatives: createX402StationAlternativesTool(config),
     x402StationWatchSubscribe: createX402StationWatchSubscribeTool(config),
     x402StationWatchStatus: createX402StationWatchStatusTool(config),
     x402StationWatchUnsubscribe: createX402StationWatchUnsubscribeTool(config),

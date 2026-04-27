@@ -17,11 +17,12 @@ import { createX402StationTools } from '../tools.js';
 const VALID_PK = '0x' + 'a'.repeat(64);
 
 describe('createX402StationTools', () => {
-  it('returns all six tools with correct ids', () => {
+  it('returns all seven tools with correct ids', () => {
     const tools = createX402StationTools({ privateKey: VALID_PK });
     expect(tools.x402StationPreflight.id).toBe('x402station-preflight');
     expect(tools.x402StationForensics.id).toBe('x402station-forensics');
     expect(tools.x402StationCatalogDecoys.id).toBe('x402station-catalog-decoys');
+    expect(tools.x402StationAlternatives.id).toBe('x402station-alternatives');
     expect(tools.x402StationWatchSubscribe.id).toBe('x402station-watch-subscribe');
     expect(tools.x402StationWatchStatus.id).toBe('x402station-watch-status');
     expect(tools.x402StationWatchUnsubscribe.id).toBe('x402station-watch-unsubscribe');

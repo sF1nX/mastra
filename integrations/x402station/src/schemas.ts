@@ -60,6 +60,31 @@ export const WatchSecretInputSchema = z.object({
     .describe('The 64-char hex secret returned by watch_subscribe.'),
 });
 
+// Routing-fallback. At least one of `url` or `taskClass` required.
+export const AlternativesInputSchema = z.object({
+  url: z
+    .string()
+    .url()
+    .optional()
+    .describe(
+      'URL flagged by preflight (or otherwise rejected). Looked up in the catalog to extract provider/domain/category/price band as match keys.',
+    ),
+  taskClass: z
+    .string()
+    .max(80)
+    .optional()
+    .describe(
+      "Service category hint (e.g. 'llm-completions', 'Inference'). Fallback match key when `url` is unknown to the catalog, OR alone for category-only discovery.",
+    ),
+  limit: z
+    .number()
+    .int()
+    .min(1)
+    .max(10)
+    .optional()
+    .describe('Max alternatives to return (1..10, default 5).'),
+});
+
 export const PaymentReceiptSchema = z
   .object({
     transaction: z.string().optional(),
@@ -133,6 +158,18 @@ export const CatalogDecoysOutputSchema = z.object({
   paymentReceipt: PaymentReceiptSchema,
 });
 
+export const AlternativesOutputSchema = z.object({
+  result: z
+    .object({
+      target: z.unknown(),
+      match_strategy: z.string(),
+      alternatives: z.array(z.unknown()),
+      candidate_count: z.number(),
+    })
+    .passthrough(),
+  paymentReceipt: PaymentReceiptSchema,
+});
+
 export const WatchSubscribeOutputSchema = z.object({
   result: z
     .object({
@@ -168,5 +205,6 @@ export const WatchUnsubscribeOutputSchema = z
 export type PreflightInput = z.infer<typeof PreflightInputSchema>;
 export type ForensicsInput = z.infer<typeof ForensicsInputSchema>;
 export type CatalogDecoysInput = z.infer<typeof CatalogDecoysInputSchema>;
+export type AlternativesInput = z.infer<typeof AlternativesInputSchema>;
 export type WatchSubscribeInput = z.infer<typeof WatchSubscribeInputSchema>;
 export type WatchSecretInput = z.infer<typeof WatchSecretInputSchema>;

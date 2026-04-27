@@ -2,6 +2,7 @@ export { getX402StationClient, type X402StationClient, type X402StationClientOpt
 export { createX402StationPreflightTool } from './preflight.js';
 export { createX402StationForensicsTool } from './forensics.js';
 export { createX402StationCatalogDecoysTool } from './decoys.js';
+export { createX402StationAlternativesTool } from './alternatives.js';
 export {
   createX402StationWatchSubscribeTool,
   createX402StationWatchStatusTool,
@@ -14,11 +15,13 @@ export {
   PreflightInputSchema,
   ForensicsInputSchema,
   CatalogDecoysInputSchema,
+  AlternativesInputSchema,
   WatchSubscribeInputSchema,
   WatchSecretInputSchema,
   type PreflightInput,
   type ForensicsInput,
   type CatalogDecoysInput,
+  type AlternativesInput,
   type WatchSubscribeInput,
   type WatchSecretInput,
 } from './schemas.js';
@@ -32,6 +35,8 @@ export type {
   ForensicsHourBucket,
   CatalogDecoysResponse,
   CatalogDecoyEntry,
+  AlternativesResponse,
+  AlternativeEntry,
   WatchSubscribeResponse,
   WatchStatusResponse,
   WatchUnsubscribeResponse,
