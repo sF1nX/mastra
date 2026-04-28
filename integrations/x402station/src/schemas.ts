@@ -60,6 +60,20 @@ export const WatchSecretInputSchema = z.object({
     .describe('The 64-char hex secret returned by watch_subscribe.'),
 });
 
+// Bulk-preflight credits. v1 has no parameters — fixed $0.50 / 1000 calls.
+export const BuyCreditsInputSchema = z
+  .object({})
+  .describe('Buy 1000 prepaid /api/v1/preflight calls for $0.50 USDC. No parameters in v1.');
+
+// Read a credit's balance + expiry. UUID-only access; the id is the bearer
+// token returned by the buy_credits tool.
+export const CreditsStatusInputSchema = z.object({
+  creditId: z
+    .string()
+    .uuid()
+    .describe('The creditId UUID returned by buy_credits.'),
+});
+
 // Catalog diff polling. `since` is an ISO 8601 timestamp (default = now() -
 // 24h, cap 30 days back). `limit` caps each of added_endpoints[] and
 // removed_endpoints[] (1..500, default 200).
@@ -180,6 +194,31 @@ export const CatalogDecoysOutputSchema = z.object({
   paymentReceipt: PaymentReceiptSchema,
 });
 
+export const BuyCreditsOutputSchema = z.object({
+  result: z
+    .object({
+      creditId: z.string(),
+      balance: z.number(),
+      initialBalance: z.number(),
+      paidAmount: z.string(),
+      expiresAt: z.string(),
+    })
+    .passthrough(),
+  paymentReceipt: PaymentReceiptSchema,
+});
+
+export const CreditsStatusOutputSchema = z
+  .object({
+    creditId: z.string(),
+    balance: z.number(),
+    initialBalance: z.number(),
+    used: z.number(),
+    paidAmount: z.string(),
+    expiresAt: z.string(),
+    expired: z.boolean(),
+  })
+  .passthrough();
+
 export const WhatsNewOutputSchema = z.object({
   result: z
     .object({
@@ -255,5 +294,7 @@ export type ForensicsInput = z.infer<typeof ForensicsInputSchema>;
 export type CatalogDecoysInput = z.infer<typeof CatalogDecoysInputSchema>;
 export type AlternativesInput = z.infer<typeof AlternativesInputSchema>;
 export type WhatsNewInput = z.infer<typeof WhatsNewInputSchema>;
+export type BuyCreditsInput = z.infer<typeof BuyCreditsInputSchema>;
+export type CreditsStatusInput = z.infer<typeof CreditsStatusInputSchema>;
 export type WatchSubscribeInput = z.infer<typeof WatchSubscribeInputSchema>;
 export type WatchSecretInput = z.infer<typeof WatchSecretInputSchema>;

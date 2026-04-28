@@ -1,5 +1,9 @@
 import { createX402StationAlternativesTool } from './alternatives.js';
 import type { X402StationClientOptions } from './client.js';
+import {
+  createX402StationBuyCreditsTool,
+  createX402StationCreditsStatusTool,
+} from './credits.js';
 import { createX402StationCatalogDecoysTool } from './decoys.js';
 import { createX402StationForensicsTool } from './forensics.js';
 import { createX402StationPreflightTool } from './preflight.js';
@@ -11,7 +15,7 @@ import {
 import { createX402StationWhatsNewTool } from './whats-new.js';
 
 /**
- * Build all eight x402station tools in one call. Pass a single
+ * Build all ten x402station tools in one call. Pass a single
  * configuration (account / privateKey / baseUrl / fetchImpl /
  * timeoutMs) and every tool inherits it.
  *
@@ -37,6 +41,8 @@ export function createX402StationTools(config: X402StationClientOptions = {}) {
     x402StationCatalogDecoys: createX402StationCatalogDecoysTool(config),
     x402StationAlternatives: createX402StationAlternativesTool(config),
     x402StationWhatsNew: createX402StationWhatsNewTool(config),
+    x402StationBuyCredits: createX402StationBuyCreditsTool(config),
+    x402StationCreditsStatus: createX402StationCreditsStatusTool(config),
     x402StationWatchSubscribe: createX402StationWatchSubscribeTool(config),
     x402StationWatchStatus: createX402StationWatchStatusTool(config),
     x402StationWatchUnsubscribe: createX402StationWatchUnsubscribeTool(config),

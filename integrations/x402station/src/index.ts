@@ -5,6 +5,10 @@ export { createX402StationCatalogDecoysTool } from './decoys.js';
 export { createX402StationAlternativesTool } from './alternatives.js';
 export { createX402StationWhatsNewTool } from './whats-new.js';
 export {
+  createX402StationBuyCreditsTool,
+  createX402StationCreditsStatusTool,
+} from './credits.js';
+export {
   createX402StationWatchSubscribeTool,
   createX402StationWatchStatusTool,
   createX402StationWatchUnsubscribeTool,
@@ -18,6 +22,8 @@ export {
   CatalogDecoysInputSchema,
   AlternativesInputSchema,
   WhatsNewInputSchema,
+  BuyCreditsInputSchema,
+  CreditsStatusInputSchema,
   WatchSubscribeInputSchema,
   WatchSecretInputSchema,
   type PreflightInput,
@@ -25,6 +31,8 @@ export {
   type CatalogDecoysInput,
   type AlternativesInput,
   type WhatsNewInput,
+  type BuyCreditsInput,
+  type CreditsStatusInput,
   type WatchSubscribeInput,
   type WatchSecretInput,
 } from './schemas.js';
@@ -42,6 +50,8 @@ export type {
   AlternativeEntry,
   WhatsNewResponse,
   WhatsNewEndpoint,
+  BuyCreditsResponse,
+  CreditsStatusResponse,
   WatchSubscribeResponse,
   WatchStatusResponse,
   WatchUnsubscribeResponse,

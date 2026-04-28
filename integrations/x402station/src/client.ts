@@ -178,10 +178,15 @@ export function getX402StationClient(config: X402StationClientOptions = {}): X40
 
   async function callFree<T>(path: string, method: 'GET' | 'DELETE', secret: string): Promise<T> {
     let res: Response;
+    // Watch routes need x-x402station-secret. The credits-status route
+    // (id-gated, secret-less) doesn't — pass an empty `secret` and we
+    // skip the header so we don't ship "x-x402station-secret: ".
+    const headers: Record<string, string> = {};
+    if (secret) headers['x-x402station-secret'] = secret;
     try {
       res = await fetchFree(`${baseUrl}${path}`, {
         method,
-        headers: { 'x-x402station-secret': secret },
+        headers,
         signal: AbortSignal.timeout(timeoutMs),
       });
     } catch (err) {

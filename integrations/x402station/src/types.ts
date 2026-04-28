@@ -150,6 +150,33 @@ export interface AlternativeEntry {
   [key: string]: unknown;
 }
 
+export interface BuyCreditsResponse {
+  creditId: string;
+  balance: number;
+  initialBalance: number;
+  paidAmount: string;
+  payerAddress: string | null;
+  createdAt: string;
+  expiresAt: string;
+  usage: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface CreditsStatusResponse {
+  creditId: string;
+  balance: number;
+  initialBalance: number;
+  used: number;
+  paidAmount: string;
+  payerAddress: string | null;
+  createdAt: string;
+  expiresAt: string;
+  expired: boolean;
+  paymentTx: string | null;
+  paymentNetwork: string | null;
+  [key: string]: unknown;
+}
+
 export interface WhatsNewEndpoint {
   url: string;
   service_id: string;
