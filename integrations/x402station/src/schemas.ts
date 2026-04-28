@@ -60,6 +60,28 @@ export const WatchSecretInputSchema = z.object({
     .describe('The 64-char hex secret returned by watch_subscribe.'),
 });
 
+// Catalog diff polling. `since` is an ISO 8601 timestamp (default = now() -
+// 24h, cap 30 days back). `limit` caps each of added_endpoints[] and
+// removed_endpoints[] (1..500, default 200).
+export const WhatsNewInputSchema = z.object({
+  since: z
+    .string()
+    .datetime()
+    .optional()
+    .describe(
+      'ISO 8601 timestamp. Default = now() - 24h. Cannot be older than 30 days or in the future.',
+    ),
+  limit: z
+    .number()
+    .int()
+    .min(1)
+    .max(500)
+    .optional()
+    .describe(
+      'Per-list cap (1..500, default 200). Applied independently to added_endpoints and removed_endpoints.',
+    ),
+});
+
 // Routing-fallback. At least one of `url` or `taskClass` required.
 export const AlternativesInputSchema = z.object({
   url: z
@@ -158,6 +180,32 @@ export const CatalogDecoysOutputSchema = z.object({
   paymentReceipt: PaymentReceiptSchema,
 });
 
+export const WhatsNewOutputSchema = z.object({
+  result: z
+    .object({
+      since: z.string(),
+      until: z.string(),
+      window_hours: z.number(),
+      added_endpoints: z.array(z.unknown()),
+      removed_endpoints: z.array(z.unknown()),
+      summary: z
+        .object({
+          added_endpoints_count: z.number(),
+          removed_endpoints_count: z.number(),
+          added_services_count: z.number(),
+          removed_services_count: z.number(),
+          polls_in_window: z.number(),
+          current_active_endpoints: z.number(),
+          current_active_services: z.number(),
+        })
+        .passthrough(),
+      truncated: z.boolean(),
+      limit: z.number(),
+    })
+    .passthrough(),
+  paymentReceipt: PaymentReceiptSchema,
+});
+
 export const AlternativesOutputSchema = z.object({
   result: z
     .object({
@@ -206,5 +254,6 @@ export type PreflightInput = z.infer<typeof PreflightInputSchema>;
 export type ForensicsInput = z.infer<typeof ForensicsInputSchema>;
 export type CatalogDecoysInput = z.infer<typeof CatalogDecoysInputSchema>;
 export type AlternativesInput = z.infer<typeof AlternativesInputSchema>;
+export type WhatsNewInput = z.infer<typeof WhatsNewInputSchema>;
 export type WatchSubscribeInput = z.infer<typeof WatchSubscribeInputSchema>;
 export type WatchSecretInput = z.infer<typeof WatchSecretInputSchema>;

@@ -8,9 +8,10 @@ import {
   createX402StationWatchSubscribeTool,
   createX402StationWatchUnsubscribeTool,
 } from './watch.js';
+import { createX402StationWhatsNewTool } from './whats-new.js';
 
 /**
- * Build all seven x402station tools in one call. Pass a single
+ * Build all eight x402station tools in one call. Pass a single
  * configuration (account / privateKey / baseUrl / fetchImpl /
  * timeoutMs) and every tool inherits it.
  *
@@ -35,6 +36,7 @@ export function createX402StationTools(config: X402StationClientOptions = {}) {
     x402StationForensics: createX402StationForensicsTool(config),
     x402StationCatalogDecoys: createX402StationCatalogDecoysTool(config),
     x402StationAlternatives: createX402StationAlternativesTool(config),
+    x402StationWhatsNew: createX402StationWhatsNewTool(config),
     x402StationWatchSubscribe: createX402StationWatchSubscribeTool(config),
     x402StationWatchStatus: createX402StationWatchStatusTool(config),
     x402StationWatchUnsubscribe: createX402StationWatchUnsubscribeTool(config),
