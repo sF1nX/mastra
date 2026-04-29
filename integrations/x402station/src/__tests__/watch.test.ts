@@ -12,7 +12,7 @@ vi.mock('viem/accounts', () => ({
   privateKeyToAccount: (_pk: string) => ({ address: '0x30d2b1f9bcEdE5F13136b56Ff199A8ad6E4f50de' }),
 }));
 
-import { WatchSubscribeInputSchema } from '../schemas.js';
+import { WatchSubscribeInputSchema, validateWebhookUrl } from '../schemas.js';
 import {
   createX402StationWatchStatusTool,
   createX402StationWatchSubscribeTool,
@@ -148,5 +148,32 @@ describe('createX402StationWatchUnsubscribeTool', () => {
     const tool = createX402StationWatchUnsubscribeTool({ privateKey: VALID_PK, fetchImpl });
     await tool.execute!({ watchId: VALID_ID, secret: VALID_SECRET }, {} as never);
     expect(calls[0]!.method).toBe('DELETE');
+  });
+});
+
+// audit-2026-04-29 recon-7 HIGH-8 regression — webhookUrl SSRF guard.
+// Pure (no DNS) host check rejects loopback / private / link-local /
+// cloud-metadata / userinfo URLs client-side before they reach our
+// server (which has its own SSRF guard at /api/v1/watch).
+describe('validateWebhookUrl (SSRF guard)', () => {
+  it.each([
+    ['public HTTPS — ok', 'https://my-agent.example.com/x402-alerts', true],
+    ['plain HTTP — reject', 'http://example.com/x402-alerts', false],
+    ['localhost — reject', 'https://localhost/hook', false],
+    ['127.0.0.1 — reject', 'https://127.0.0.1/hook', false],
+    ['127.0.0.5 — reject (any 127/8)', 'https://127.0.0.5:8443/hook', false],
+    ['cloud metadata 169.254.169.254 — reject', 'https://169.254.169.254/hook', false],
+    ['link-local 169.254.5.5 — reject', 'https://169.254.5.5/hook', false],
+    ['RFC1918 10.0.0.5 — reject', 'https://10.0.0.5/hook', false],
+    ['RFC1918 192.168.1.1 — reject', 'https://192.168.1.1/hook', false],
+    ['RFC1918 172.16.0.5 — reject', 'https://172.16.0.5/hook', false],
+    ['CGNAT 100.64.0.1 — reject', 'https://100.64.0.1/hook', false],
+    ['IPv6 loopback [::1] — reject', 'https://[::1]/hook', false],
+    ['IPv6 ULA [fc00::1] — reject', 'https://[fc00::1]/hook', false],
+    ['IPv6 link-local [fe80::1] — reject', 'https://[fe80::1]/hook', false],
+    ['userinfo spoof — reject', 'https://api.good.com@evil.com/hook', false],
+    ['user:pass — reject', 'https://user:pass@example.com/hook', false],
+  ])('%s', (_label, url, expectOk) => {
+    expect(validateWebhookUrl(url).ok).toBe(expectOk);
   });
 });
