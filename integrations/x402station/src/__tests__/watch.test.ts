@@ -174,6 +174,7 @@ describe('validateWebhookUrl (SSRF guard)', () => {
     ['userinfo spoof — reject', 'https://api.good.com@evil.com/hook', false],
     ['user:pass — reject', 'https://user:pass@example.com/hook', false],
   ])('%s', (_label, url, expectOk) => {
-    expect(validateWebhookUrl(url).ok).toBe(expectOk);
+    // null = ok, string = rejection reason
+    expect(validateWebhookUrl(url) === null).toBe(expectOk);
   });
 });
